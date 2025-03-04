@@ -28,7 +28,7 @@ const Navbar = () => {
               className="w-8 sm:w-10 drop-shadow"
             />
             <div className="absolute hidden rounded group-hover:block top-0 right-0 z-10 pt-12 text-black">
-              <ul className="bg-white p-1 text-sm m-0 rounded-md list-none border">
+              <ul className="bg-white p-1 text-sm m-0 rounded-md list-none border border-gray-200 ">
                 <li className="px-2 py-1 pr-10 cursor-pointer ">Logout</li>
               </ul>
             </div>
