@@ -10,15 +10,17 @@ import Footer from "./components/Footer";
 const App = () => {
   return (
     <UserContextProvider>
-      {/* all pages padding and background css */}
-      <div className="px-4 sm:px-10 md:px-14 lg:px-28 min-h-screen bg-gradient-to-b from-teal-50 to-orange-50">
+      <div className="flex flex-col px-4 min-h-screen sm:px-10 md:px-14 lg:px-28 bg-gradient-to-b from-teal-50 to-orange-50">
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/result" element={<Result />} />
-          <Route path="/buy" element={<BuyCredits />} />
-        </Routes>
-        <Footer/>
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/result" element={<Result />} />
+            <Route path="/buy" element={<BuyCredits />} />
+          </Routes>
+        </main>
+
+        <Footer />
       </div>
     </UserContextProvider>
   );
