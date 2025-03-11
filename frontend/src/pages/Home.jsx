@@ -14,7 +14,6 @@ const Home = () => {
       <Desc/>
       <Testimonials/>
       <GenerateBtn/>
-      <Footer/>
     </div>
   )
 }

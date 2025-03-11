@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Result from "./pages/Result";
 import Navbar from "./components/Navbar";
 import UserContextProvider from "./context/UserContextProvider";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/result" element={<Result />} />
           <Route path="/buy" element={<BuyCredits />} />
         </Routes>
+        <Footer/>
       </div>
     </UserContextProvider>
   );
