@@ -56,7 +56,7 @@ export const stepsData = [
   ];
 
 export const testimonialsData = [
-    {
+    {  
         image:profile_img_1,
         name:'Donald Jackman',
         role:'Graphic Designer',
