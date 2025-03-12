@@ -1,17 +1,31 @@
 import React from "react";
 import { assets } from "../assets/assets";
+import { motion } from "motion/react";
 
 const Desc = () => {
   return (
-    <div className="flex flex-col items-center justify-center my-32">
+    <motion.div
+      className="flex flex-col items-center justify-center my-32"
+      initial={{ opacity: 0.2, y: 100 }}
+      transition={{ duration: 1 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
       <h1 className="text-3xl">Create AI Images</h1>
       <p className="text-sm text-stone-500 mt-2">
         Turn your imagination into visuals
       </p>
       <div className="flex flex-col items-center gap-10 md:gap-14 md:flex-row mt-10">
-        <img width={40} src={assets.sample_img_1} alt="" className="h-full w-80 xl:w-96 rounded-lg"/>
+        <img
+          width={40}
+          src={assets.sample_img_1}
+          alt=""
+          className="h-full w-80 xl:w-96 rounded-lg"
+        />
         <div className="flex flex-col">
-          <h1 className="text-3xl font-medium max-w-lg mb-4">Introducing the Al-Powered Text to Image Generator</h1>
+          <h1 className="text-3xl font-medium max-w-lg mb-4">
+            Introducing the Al-Powered Text to Image Generator
+          </h1>
           <p className="text-sm text-stone-500 my-3">
             Easily bring your ideas to life with our free Al image generator.
             Whether you need stunning visuals or unique imagery, our tool
@@ -28,7 +42,7 @@ const Desc = () => {
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
