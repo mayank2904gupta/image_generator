@@ -7,13 +7,17 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
 import UserContext from "./context/UserContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
-  const {showLogin}=useContext(UserContext)
+  const { showLogin, backendUrl } = useContext(UserContext);
   return (
+    <>
+      <ToastContainer position="top-center" autoClose={3000} />
       <div className="flex flex-col px-4 min-h-screen sm:px-10 md:px-14 lg:px-28 bg-gradient-to-b from-teal-50 to-orange-50">
         <Navbar />
-        {showLogin && <Login/>}
+        {showLogin && <Login />}
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -24,6 +28,7 @@ const App = () => {
 
         <Footer />
       </div>
+    </>
   );
 };
 

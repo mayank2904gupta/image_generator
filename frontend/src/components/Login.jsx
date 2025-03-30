@@ -1,11 +1,65 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState} from "react";
 import { assets } from "../assets/assets";
 import UserContext from "../context/UserContext";
 import * as motion from "motion/react-client";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
   const [state, setState] = useState("Login");
-  const { setShowLogin } = useContext(UserContext);
+  const { setShowLogin, setToken, backendUrl, setUser } =
+    useContext(UserContext);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    console.log("Backend URL from .env:", backendUrl);
+  }, [backendUrl]);
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      if (state === "Login") {
+        const { data } = await axios.post(backendUrl + "/user/login", {
+          email,
+          password,
+        });
+        if (data.success) {
+          setToken(data.token);
+          setUser(data.user);
+          console.log(data.user);
+          localStorage.setItem("token", data.token);
+          console.log(data);
+
+          toast.success(data.message);
+          setShowLogin(false);
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        const { data } = await axios.post(backendUrl + "/user/register", {
+          name,
+          email,
+          password,
+        });
+        if (data.success) {
+          setToken(data.token);
+          setUser(data.user);
+          localStorage.setItem("token", data.token);
+          setTimeout(() => {
+            toast.success(data.message);
+          }, 100);
+          setShowLogin(false);
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      console.error("Signup/Login Error:", error);
+      toast.error(error.message);
+    }
+  };
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -17,10 +71,14 @@ const Login = () => {
 
   return (
     <motion.div
-    initial={{ scale: 0 }} animate={{ scale: 1 }}
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
       className="fixed top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-xs bg-black/30 flex justify-center items-center"
     >
-      <form className="bg-white relative p-10 rounded-xl tex-slate-500">
+      <form
+        onSubmit={onSubmitHandler}
+        className="bg-white relative p-10 rounded-xl tex-slate-500"
+      >
         <h1 className="text-2xl font-medium text-center text-neutral-700 ">
           {state}
         </h1>
@@ -29,6 +87,8 @@ const Login = () => {
           <div className="border border-gray-300 gap-2 px-6 py-2 flex items-center rounded-full mt-5">
             <img src={assets.email_icon} alt="" />
             <input
+              onChange={(e) => setName(e.target.value)}
+              value={name}
               type="text"
               placeholder="Full Name"
               required
@@ -39,6 +99,8 @@ const Login = () => {
         <div className="border border-gray-300 gap-2 px-6 py-2 flex items-center rounded-full mt-5">
           <img src={assets.email_icon} alt="" />
           <input
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
             type="email"
             placeholder="Email id"
             required
@@ -48,6 +110,8 @@ const Login = () => {
         <div className="border border-gray-300 gap-2 px-6 py-2 flex items-center rounded-full mt-4">
           <img src={assets.lock_icon} alt="" />
           <input
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
             type="password"
             placeholder="Password"
             required
@@ -93,6 +157,7 @@ const Login = () => {
           className="absolute top-5 right-5 cursor-pointer"
         />
       </form>
+      <ToastContainer position="top-center" />
     </motion.div>
   );
 };

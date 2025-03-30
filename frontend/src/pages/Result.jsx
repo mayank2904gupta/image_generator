@@ -7,7 +7,9 @@ const Result = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
-  const onSubmitHandler = async (e) => {};
+  const onSubmitHandler = async (e) => {
+    
+  };
 
   return (
     <motion.form

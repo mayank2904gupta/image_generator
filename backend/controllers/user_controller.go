@@ -70,6 +70,7 @@ func RegisterUserHandler(c *gin.Context) {
 		"success": true,
 		"token":   token,
 		"user":    gin.H{"name": inputUser.Name},
+		"message": "sign up successfully",
 	})
 }
 

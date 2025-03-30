@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -14,29 +13,31 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mayank2904gupta/image_generator/backend/config"
 	"github.com/mayank2904gupta/image_generator/backend/models"
+	"github.com/mayank2904gupta/image_generator/backend/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func GenerateImage(c *gin.Context) {
-	apiKey := os.Getenv("CLIPDROP_API_KEY")
-	fmt.Println("Using API Key:", apiKey)
-
+	
 	var requestBody struct {
-		Email  string `bson:"email" json:"email" validate:"required,email"`
 		Prompt string `bson:"prompt" json:"prompt"`
 	}
-
+	email, exists := c.Get("email")
+	if !exists {
+        c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Email not found"})
+        return
+    }
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid request, provide email and prompt"})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid request, provide prompt"})
 		return
 	}
-
+	
 	var user models.User
 	collection := config.GetCollection("users")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	err := collection.FindOne(ctx, bson.M{"email": requestBody.Email}).Decode(&user)
+	err := collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -57,7 +58,7 @@ func GenerateImage(c *gin.Context) {
 		return
 	}
 	base64Image := base64.StdEncoding.EncodeToString(imageData)
-	resultImage := fmt.Sprintf("data:image/png;base64,%s", base64Image)
+	// resultImage := fmt.Sprintf("data:image/png;base64,%s", base64Image)
 
 	newBalance := user.CreditBalance - 1
 	update := bson.M{"$set": bson.M{"creditBalance": newBalance}}
@@ -69,12 +70,20 @@ func GenerateImage(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Failed to update balance"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Image generated successfully",
-		"image":   resultImage,
-		"credits": newBalance,
-	})
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"success": true,
+	// 	"message": "Image generated successfully",
+	// 	"image":   resultImage,
+	// 	"credits": newBalance,
+	// })
+
+	imageURL, err := utils.SaveImage(base64Image)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Error saving image"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "image_url": imageURL,"creditBalance":newBalance})
+
 }
 
 func callClipdropAPI(prompt string) ([]byte, error) {

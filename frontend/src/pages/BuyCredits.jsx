@@ -18,7 +18,7 @@ const BuyCredits = () => {
       <h1 className="text-center text-3xl font-medium ">Choose the plan</h1>
       <div className="flex flex-wrap gap-6 justify-center text-left mt-6 sm:mt-10">
         {plans.map((plan, index) => (
-          <PlanCard plan={plan} />
+          <PlanCard key={index} plan={plan} />
         ))}
       </div>
     </motion.div>
