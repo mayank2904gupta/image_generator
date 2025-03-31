@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -12,40 +12,23 @@ const UserContextProvider = ({ children }) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
 
-  // 🔹 Login Function
-  const login = (user, token) => {
+  const login = useCallback((user, token) => {
     setUser(user);
     setToken(token);
-    localStorage.setItem(
-      "userData",
-      JSON.stringify({ user, token })
-    );
-  };
+    localStorage.setItem("userData", JSON.stringify({ user, token }));
+    console.log("user logged in ", { user, token });
+  }, []);
 
-  // 🔹 Logout Function
   const logout = () => {
     localStorage.removeItem("userData");
     setUser(null);
     setToken(null);
   };
 
-  // 🔹 Restore Session on Refresh
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
-
     if (storedData && storedData.token) {
-      axios
-        .get(`${backendUrl}/auth/restore`, {
-          headers: { Authorization: `Bearer ${storedData.token}` },
-        })
-        .then(({ data }) => {
-          if (data.success) {
-            login(data.user, storedData.token);
-          } else {
-            logout();
-          }
-        })
-        .catch(() => logout());
+      login(storedData.user, storedData.token);
     }
   }, []);
 

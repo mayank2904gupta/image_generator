@@ -14,6 +14,5 @@ func SetUpRoutes(r *gin.Engine) {
 		c.JSON(http.StatusOK, gin.H{"message": "Welcome to Gin Backend!"})
 	})
 	r.POST("/generate-image",middlewares.UserAuth(),controllers.GenerateImage)
-	r.GET("/auth/restore",middlewares.RestoreSession)
 	UserRoutes(r)
 }
