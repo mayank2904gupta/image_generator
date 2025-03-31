@@ -81,39 +81,42 @@ func LoginUserHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid input"})
 		return
 	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	collection := config.GetCollection("users")
 
 	var storedUser models.User
-
 	err := collection.FindOne(ctx, bson.M{"email": inputCredential.Email}).Decode(&storedUser)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "message": "no user found with this credentials"})
+			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "message": "No user found with these credentials"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "database error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Database error"})
 		return
 	}
+
+	// Check password
 	err = bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(inputCredential.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "password do not match"})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Password does not match"})
 		return
 	}
 
+	// Generate token
 	token, err := utils.GenerateToken(storedUser.Email)
-
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "error in generating token", "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error in generating token", "error": err.Error()})
 		return
 	}
 
+	// Return token & user data
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"message":"login successful",
-		"token":token,
+		"message": "Login successful",
+		"token": token,
 		"user": gin.H{"name": storedUser.Name},
 	})
 }

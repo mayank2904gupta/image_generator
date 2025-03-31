@@ -9,6 +9,7 @@ import Login from "./components/Login";
 import UserContext from "./context/UserContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Testing from "./pages/Testing";
 
 const App = () => {
   const { showLogin, backendUrl } = useContext(UserContext);
@@ -23,6 +24,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/result" element={<Result />} />
             <Route path="/buy" element={<BuyCredits />} />
+            <Route path="/hello" element={<Testing/>}/>
           </Routes>
         </main>
 

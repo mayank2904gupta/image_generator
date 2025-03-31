@@ -25,13 +25,17 @@ const Login = () => {
           email,
           password,
         });
+  
         if (data.success) {
           setToken(data.token);
           setUser(data.user);
-          console.log(data.user);
-          localStorage.setItem("token", data.token);
-          console.log(data);
-
+  
+          // Store full user data in localStorage
+          localStorage.setItem(
+            "userData",
+            JSON.stringify({ user: data.user, token: data.token })
+          );
+  
           toast.success(data.message);
           setShowLogin(false);
         } else {
@@ -43,10 +47,17 @@ const Login = () => {
           email,
           password,
         });
+  
         if (data.success) {
           setToken(data.token);
           setUser(data.user);
-          localStorage.setItem("token", data.token);
+  
+          // Store full user data in localStorage
+          localStorage.setItem(
+            "userData",
+            JSON.stringify({ user: data.user, token: data.token })
+          );
+  
           setTimeout(() => {
             toast.success(data.message);
           }, 100);
@@ -60,6 +71,7 @@ const Login = () => {
       toast.error(error.message);
     }
   };
+  
 
   useEffect(() => {
     document.body.style.overflow = "hidden";

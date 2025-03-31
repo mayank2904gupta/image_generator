@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { motion } from "motion/react";
+import UserContext from "../context/UserContext";
+
 
 const Result = () => {
+  const { token, generateImage} = useContext(UserContext);
   const [image, setImage] = useState(assets.sample_img_1);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
   const onSubmitHandler = async (e) => {
-    
-  };
+    e.preventDefault();
+    setLoading(true)
+    if (input){
+      const image = await generateImage(input)
+      if (image){
+          setImage(image)
+          setIsImageLoaded(true)        
+      }
+    }
+    setLoading(false) 
+  }
 
   return (
     <motion.form
@@ -24,7 +36,7 @@ const Result = () => {
         <div className="relative">
           <img
             src={image}
-            alt=""
+            alt="Dynamic"
             width={300}
             className="rounded max-w-sm mt-20 "
           />
@@ -65,7 +77,7 @@ const Result = () => {
           </p>
           <a
             href={image}
-            download
+            download="generated_image.png"
             className="bg-zinc-900 rounded-full text-white cursor-pointer px-10 py-3 "
           >
             Download
